@@ -52,16 +52,8 @@ def add_recipe_view(request):
 
     if request.method == 'POST':
         form = AddRecipeForm(request.POST)
-        if form.is_valid():
-            data = form.cleaned_data
-            Recipe.objects.create(
-                author=data['author'],
-                title=data['title'],
-                description=data['description'],
-                time_required=data['time_required'],
-                instructions=data['instructions']
-            )
-            return HttpResponseRedirect(reverse('homepage'))
+        form.save()
+        return HttpResponseRedirect(reverse('homepage'))
 
     form = AddRecipeForm()
     return render(request, html, {'form': form})
