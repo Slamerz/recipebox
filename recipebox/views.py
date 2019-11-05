@@ -1,7 +1,12 @@
 from django.shortcuts import render, HttpResponseRedirect, reverse
 
+from django.contrib.auth.models import User
+
+from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.decorators import login_required
+
 from recipebox.models import Author, Recipe
-from recipebox.forms import AddAuthorForm, AddRecipeForm
+from recipebox.forms import AddAuthorForm, AddRecipeForm, LoginForm
 
 
 def index(request):
@@ -9,7 +14,20 @@ def index(request):
 
     recipes = Recipe.objects.all()
 
-    return render(request, html, {'recipes': recipes})
+    if request.user.is_authenticated:
+        button_href = '/logout/'
+        button_message = 'LOGOUT'
+    else:
+        button_href = '/login/'
+        button_message = 'LOGIN'
+
+    return render(
+        request,
+        html,
+        {
+            'recipes': recipes,
+            'button_href': button_href,
+            'button_message': button_message})
 
 
 def recipe_view(request, id):
@@ -29,16 +47,31 @@ def author_view(request, id):
     return render(request, html, {'author': author, 'recipes': recipes})
 
 
+@login_required
 def add_author_view(request):
+
+    # try:
+    #     request.user.is_staff
+    # except Exception as e:
+    #     raise e
+
+    if not request.user.is_staff:
+        return HttpResponseRedirect(reverse('homepage'))
+
     html = 'add_author.html'
 
     if request.method == 'POST':
         form = AddAuthorForm(request.POST)
         if form.is_valid():
             data = form.cleaned_data
+            u = User.objects.create_user(
+                username=data['username'],
+                password=data['password']
+            )
             Author.objects.create(
+                user=u,
                 name=data['name'],
-                bio=data['bio']
+                bio=data.get('bio')
             )
             return HttpResponseRedirect(reverse('homepage'))
 
@@ -47,13 +80,40 @@ def add_author_view(request):
     return render(request, html, {'form': form})
 
 
+@login_required
 def add_recipe_view(request):
     html = 'add_recipe.html'
 
     if request.method == 'POST':
-        form = AddRecipeForm(request.POST)
+        form = AddRecipeForm(request.user, request.POST)
         form.save()
         return HttpResponseRedirect(reverse('homepage'))
 
-    form = AddRecipeForm()
+    form = AddRecipeForm(request.user)
     return render(request, html, {'form': form})
+
+
+def login_view(request):
+    html = 'login.html'
+    if request.method == "POST":
+        form = LoginForm(request.POST)
+
+        if form.is_valid():
+            data = form.cleaned_data
+            user = authenticate(
+                username=data['username'],
+                password=data['password']
+            )
+
+        if user:
+            login(request, user)
+            return HttpResponseRedirect(
+                request.GET.get('next', reverse('homepage')))
+
+    form = LoginForm()
+    return render(request, html, {'form': form})
+
+
+def logout_view(request):
+    logout(request)
+    return HttpResponseRedirect(reverse('homepage'))

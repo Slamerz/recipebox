@@ -31,6 +31,7 @@ ALLOWED_HOSTS = ['*']
 #     '.example.com'
 # ]
 
+LOGIN_URL = '/login/'
 
 # Application definition
 
