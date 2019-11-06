@@ -5,6 +5,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.decorators import login_required
 
+from django.contrib import messages
+
 from recipebox.models import Author, Recipe
 from recipebox.forms import AddAuthorForm, AddRecipeForm, LoginForm
 
@@ -50,12 +52,10 @@ def author_view(request, id):
 @login_required
 def add_author_view(request):
 
-    # try:
-    #     request.user.is_staff
-    # except Exception as e:
-    #     raise e
-
     if not request.user.is_staff:
+        # raise Exception('Must be an admin to add an author')
+        messages.add_message(request, messages.INFO,
+                             'Only Admin Users have permission to add authors.')
         return HttpResponseRedirect(reverse('homepage'))
 
     html = 'add_author.html'

@@ -14,6 +14,9 @@ class AddRecipeForm(forms.ModelForm):
         model = Recipe
         fields = ['author', 'title', 'description',
                   'time_required', 'instructions']
+    """
+    Found solution at
+    https://simpleisbetterthancomplex.com/questions/2017/03/22/how-to-dynamically-filter-modelchoices-queryset-in-a-modelform.html """  # noqa
 
     def __init__(self, user, *args, **kwargs):
         super(AddRecipeForm, self).__init__(*args, **kwargs)
