@@ -1,3 +1,5 @@
+<a href='/'><button>Home</button></a>
+
 <h3>{{ recipe.title }}</h3>
 <h4>
   by:
@@ -11,3 +13,12 @@
 <p>{{ recipe.time_required }}</p>
 <h5>Instructions</h5>
 <p>{{ recipe.instructions }}</p>
+{% if user.is_staff %}
+<a><button>Edit Recipe</button></a>
+{% elif request.user.author == recipe.author %}
+<a href='/edit/{{recipe.id}}'><button>Edit Recipe</button></a>
+{% endif %}
+{% if request.user.is_authenticated %}
+<a href='/favorite/{{recipe.id}}'><button>Favorite</button></a>
+<a href='/unfavorite/{{recipe.id}}'><button>Unfavorite</button></a>
+{% endif %}

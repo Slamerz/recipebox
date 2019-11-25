@@ -42,11 +42,12 @@ def recipe_view(request, id):
 
 def author_view(request, id):
     html = 'author.html'
-
     author = Author.objects.get(pk=id)
+    favorite = list(author.favorite.all())
     recipes = Recipe.objects.filter(author=author)
 
-    return render(request, html, {'author': author, 'recipes': recipes})
+    return render(request, html, {
+        'author': author, 'recipes': recipes, 'favorite': favorite})
 
 
 @login_required
@@ -117,3 +118,30 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse('homepage'))
+
+
+def edit_recipe(request, id):
+    html = 'add_recipe.html'
+    instance = Recipe.objects.get(id=id)
+    if request.method == 'POST':
+        form = AddRecipeForm(
+            request.user,
+            request.POST,
+            instance=instance)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('homepage'))
+    form = AddRecipeForm(request.user, instance=instance)
+    return render(request, html, {'form': form})
+
+
+def favorite_recipe(request, id):
+    favorite = Recipe.objects.get(id=id)
+    request.user.author.favorite.add(favorite)
+    return HttpResponseRedirect(reverse('recipe_view', kwargs={'id': id}))
+
+
+def unfavorite_recipe(request, id):
+    favorite = Recipe.objects.get(id=id)
+    request.user.author.favorite.remove(favorite)
+    return HttpResponseRedirect(reverse('recipe_view', kwargs={'id': id}))

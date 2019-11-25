@@ -1,3 +1,5 @@
+<a href='/'><button>Home</button></a>
+
 <h3>{{ author.name }}</h3>
 <h4>Bio:</h4>
 <p>{{ author.bio }}</p>
@@ -8,6 +10,14 @@
     <a href="/recipes/{{ recipe.id }}">
       {{ recipe.title }}
     </a>
+  </li>
+  {% endfor %}
+</ul>
+<h4>Favorite Recipes:</h4>
+<ul>
+  {% for item in favorite %}
+  <li>
+    <a href='/recipes/{{item.id}}'>{{item}}</a>
   </li>
   {% endfor %}
 </ul>

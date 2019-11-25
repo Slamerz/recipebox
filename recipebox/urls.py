@@ -24,10 +24,13 @@ admin.site.register(Recipe)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name='homepage'),
-    path('recipes/<int:id>', views.recipe_view),
+    path('recipes/<int:id>', views.recipe_view, name='recipe_view'),
     path('authors/<int:id>', views.author_view),
     path('addauthor/', views.add_author_view, name='addauthor'),
     path('addrecipe/', views.add_recipe_view, name='addrecipe'),
     path('login/', views.login_view, name='login'),
-    path('logout/', views.logout_view, name='logout')
+    path('logout/', views.logout_view, name='logout'),
+    path('edit/<int:id>/', views.edit_recipe, name='editrecipe'),
+    path('favorite/<int:id>', views.favorite_recipe),
+    path('unfavorite/<int:id>', views.unfavorite_recipe)
 ]
