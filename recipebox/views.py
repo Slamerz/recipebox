@@ -117,3 +117,20 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return HttpResponseRedirect(reverse('homepage'))
+
+
+@login_required()
+def favorite_view(request, id):
+    author = Author.objects.get(user=request.user)
+    recipe = Recipe.objects.get(pk=id)
+    author.favorites.add(recipe)
+    return HttpResponseRedirect(reverse('homepage'))
+
+
+@login_required()
+def unfavoritre_view(request, id):
+    author = Author.objects.get(user=request.user)
+    recipe = Recipe.objects.get(pk=id)
+    author.favorites.remove(recipe)
+    return HttpResponseRedirect(reverse('homepage'))
+
