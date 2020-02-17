@@ -36,9 +36,7 @@ def recipe_view(request, id):
     html = 'recipe.html'
 
     recipe = Recipe.objects.get(pk=id)
-    signed_in = request.user.is_authenticated
-
-    return render(request, html, {'recipe': recipe, 'signed_in': signed_in})
+    return render(request, html, {'recipe': recipe, 'user': request.user})
 
 
 def author_view(request, id):
@@ -135,3 +133,16 @@ def unfavoritre_view(request, id):
     author.favorites.remove(recipe)
     return HttpResponseRedirect(reverse('homepage'))
 
+
+@login_required
+def edit_recipe_view(request, id):
+    html = 'edit_recipe.html'
+    recipe = Recipe.objects.get(pk=id)
+
+    if request.method == 'POST':
+        form = AddRecipeForm(request.user, request.POST, instance=recipe)
+        form.save()
+        return HttpResponseRedirect(reverse('homepage'))
+
+    form = AddRecipeForm(request.user, instance=recipe)
+    return render(request, html, {'form': form, 'recipe_id': recipe.id})

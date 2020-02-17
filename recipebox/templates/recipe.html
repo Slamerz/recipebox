@@ -11,7 +11,10 @@
 <p>{{ recipe.time_required }}</p>
 <h5>Instructions</h5>
 <p>{{ recipe.instructions }}</p>
-{% if signed_in %}
+{% if user.is_authenticated %}
     <a href={% url 'favorite' id=recipe.id %}><button>Favorite</button></a>
     <a href={% url 'unfavorite' id=recipe.id %}><button>Un-Favorite</button></a>
 {% endif %}
+{% if user == recipe.author.user or user.is_staff%}
+    <a href={% url 'editrecipe' id=recipe.id%}><button>Edit Recipe</button></a>
+{% endif %} 
