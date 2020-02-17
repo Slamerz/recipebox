@@ -11,3 +11,7 @@
 <p>{{ recipe.time_required }}</p>
 <h5>Instructions</h5>
 <p>{{ recipe.instructions }}</p>
+{% if signed_in %}
+    <a href={% url 'favorite' id=recipe.id %}><button>Favorite</button></a>
+    <a href={% url 'unfavorite' id=recipe.id %}><button>Un-Favorite</button></a>
+{% endif %}

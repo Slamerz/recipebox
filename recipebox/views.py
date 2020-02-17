@@ -36,8 +36,9 @@ def recipe_view(request, id):
     html = 'recipe.html'
 
     recipe = Recipe.objects.get(pk=id)
+    signed_in = request.user.is_authenticated
 
-    return render(request, html, {'recipe': recipe})
+    return render(request, html, {'recipe': recipe, 'signed_in': signed_in})
 
 
 def author_view(request, id):

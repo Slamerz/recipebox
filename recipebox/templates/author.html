@@ -11,3 +11,13 @@
   </li>
   {% endfor %}
 </ul>
+<h4>Author's Favorites</h4>
+<ul>
+    {% for recipe in author.favorites.all %}
+    <li>
+        <a href={% url 'recipes' id=recipe.id %}>
+            {{ recipe.title }}
+        </a>
+    </li>
+    {% endfor %}
+</ul>
